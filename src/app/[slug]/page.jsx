@@ -16,13 +16,13 @@ function convertTheme(themeString) {
 
 function StripeContent({stripe}) {
   return (
-    <div className='max-w-3xl mx-auto grid grid-cols-3 gap-5'>
+    <div className='max-w-3xl mx-auto md:grid grid-cols-3 gap-5'>
                   { stripe?.image?.alignment == 'left' && <img className='m-0 h-full object-cover' src={stripe.image.image.url} /> }
                   <div className={`${stripe.image ? `col-span-2` : `col-span-3`}`}>
                     <h2 className='text-inherit text-3xl mt-0'>{stripe.title}</h2>
                     {stripe?.content?.raw && <RichText content={stripe.content.raw} /> }
                   </div>
-                  { stripe?.image?.alignment == 'right' && <img className='m-0 h-full object-cover' src={stripe.image.image.url} /> }
+                  { stripe?.image?.alignment == 'right' && <img className='m-0 mb-5 h-full object-cover' src={stripe.image.image.url} /> }
 
                   { stripe.button && (
                     <a
@@ -52,9 +52,8 @@ function StripeGrid({stripe}) {
 }
 
 function Stripe({stripe}) {
-  console.log(stripe.__typename)
   return (
-    <section key={stripe.id} className={`py-10 my-2  ${convertTheme(stripe.theme)}`}>
+    <section key={stripe.id} className={`py-10 px-4 my-2  ${convertTheme(stripe.theme)}`}>
                 {(stripe.__typename == 'StripeContent') && <StripeContent stripe={stripe} />}
                 {(stripe.__typename == 'StripeGrid') && <StripeGrid stripe={stripe} />}
     </section>
