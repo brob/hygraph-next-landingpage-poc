@@ -1,22 +1,14 @@
 import Link from 'next/link'
 import { SingleNav } from '@/queries/navigations'
+import client from '@/app/utils/client'
 async function getNav(navId) {
-  const res = await fetch(process.env.HYGRAPH_ENDPOINT, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      query: SingleNav,
-      variables: { navId: navId }
-    })
-  }).then((res) => res.json())
+  const res = await client.request(SingleNav, {navId})
 
   if (res.errors) {
     console.error(res.errors)
     throw new Error(res.errors[0].message)
   }
-  return res.data.navigation.link
+  return res.navigation.link
 }
 
 export default async function NavList({ navId }) {
