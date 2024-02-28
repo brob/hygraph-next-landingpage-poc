@@ -10,20 +10,52 @@ const AllPages = `
 
 const SinglePage = `
   query SinglePage($slug: String!) {
-    page(where: { slug: $slug }) {
+    landingPage(where: { slug: $slug }) {
+      slug
       title
-      seoOverride {
-        title
-        image {
-          height
-          width
-          url
+      stripes {
+        
+        __typename
+        ... on StripeContent {
+          id
+          title
+          theme
+          image {
+            alignment
+            image {
+              url
+            }
+          }
+          content {
+            raw
+          }
+          button {
+            theme
+            link {
+              externalUrl
+              displayText
+              page {
+                ... on Post {
+                  id
+                  slug
+                  title
+                }
+                ... on Page {
+                  id
+                  slug
+                  title
+                }
+              }
+            }
+          }
         }
-        description
-      }
-      content {
-        html
-        raw
+        ... on StripeGrid {
+          id
+          contet {
+            raw
+          }
+          title
+        }
       }
     }
   }

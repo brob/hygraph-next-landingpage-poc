@@ -1,18 +1,16 @@
 import { AllPosts } from '../queries/posts'
 import Link from 'next/link'
-
+import client from './utils/client'
+import { draftMode } from 'next/headers'
 async function getPosts() {
-  const allPosts = await fetch(process.env.HYGRAPH_ENDPOINT, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      query: AllPosts
-    })
-  }).then((res) => res.json())
+  const { isEnabled } = draftMode()
 
-  return allPosts.data.posts
+  if (isEnabled) client.setHeader('Authorization', `Bearer ${process.env.HYGRAPH_TOKEN}`)
+
+  const allPosts = await client.request(AllPosts)
+  
+
+  return allPosts.posts
 }
 
 export const metadata = {
@@ -22,7 +20,7 @@ export const metadata = {
 export default async function Home({}) {
   const allPosts = await getPosts()
   return (
-    <div className="divide-y divide-gray-200">
+    <div className="divide-y  max-w-3xl mx-auto divide-gray-200">
       <div className="pt-6 pb-8 space-y-2 md:space-y-5">
         <h1 className="text-3xl leading-9 font-extrabold text-gray-900 tracking-tight sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
           Latest

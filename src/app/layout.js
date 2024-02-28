@@ -4,7 +4,7 @@ import HygraphLogo from '../../public/svg/logo.svg'
 import HygraphMark from '../../public/svg/mark.svg'
 import NavList from '../components/NavList'
 import './globals.css'
-
+import { draftMode } from 'next/headers'
 export const metadata = {
   title: {
     template: '%s | Hygraph Blog Next.js Starter'
@@ -18,8 +18,11 @@ export default function Layout({ children }) {
   return (
     <html lang="en">
       <body>
-        <div className="px-6 max-w-3xl mx-auto">
-          <header className="py-10 relative">
+        {draftMode().isEnabled && <div className='p-2 text-center text-slate-800 bg-red-300'>
+          You're currently viewing drafts.{' '} <a className='text-white' href='/api/exit-draft'>Exit draft mode</a>
+        </div>}
+        <div className="px-6">
+          <header className="py-10  max-w-3xl mx-auto relative">
             <nav className="relative flex items-center justify-between sm:h-10 ">
               <Link href="/" aria-label="Hygraph Next.js Blog Starter">
                 <Image
@@ -43,7 +46,7 @@ export default function Layout({ children }) {
             </nav>
           </header>
           <main>{children}</main>
-          <footer className="bg-white mt-5 dark:bg-gray-900">
+          <footer className="bg-white mt-5  max-w-3xl mx-auto dark:bg-gray-900">
             <div className="py-6 lg:py-8">
               <div className="md:flex md:justify-between">
                 <div className="mb-6 md:mb-0">

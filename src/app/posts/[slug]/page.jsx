@@ -4,8 +4,14 @@ import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { RichText } from '@graphcms/rich-text-react-renderer'
 import { cookies,draftMode } from 'next/headers'
+import client from '../../utils/client'
 
 async function getPosts() {
+  const { isEnabled } = draftMode()
+
+  if (isEnabled) client.setHeader('Authorization', `Bearer ${process.env.HYGRAPH_TOKEN}`)
+
+
   const allPosts = await fetch(process.env.HYGRAPH_ENDPOINT, {
     method: 'POST',
     headers: {
@@ -22,20 +28,10 @@ async function getPosts() {
 
 
 async function getData(slug) {
-  const cookieStore = cookies()
-  const apiUrl = cookieStore.get('apiUrl')?.value
-  const { post } = await fetch((apiUrl ? apiUrl : process.env.HYGRAPH_ENDPOINT), {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      query: SinglePost,
-      variables: { slug: slug }
-    })
-  })
-    .then((res) => res.json())
-    .then((res) => res.data)
+  const { isEnabled } = draftMode()
+
+  const { post } =  await client.request(SinglePost, { slug })
+  
   return post
 }
 
@@ -67,7 +63,7 @@ export default async function Post({ params }) {
   }
   return (
     <article>
-      <header className="pt-6 lg:pb-10">
+      <header className="pt-6  max-w-3xl mx-auto lg:pb-10">
         <div className="space-y-1">
           <div>
             <h1 className="text-3xl leading-9 font-extrabold text-gray-900 tracking-tight sm:text-4xl sm:leading-10 md:text-5xl md:leading-14">
@@ -77,7 +73,7 @@ export default async function Post({ params }) {
         </div>
       </header>
       <div
-        className="divide-y lg:divide-y-0 divide-gray-200 lg:grid lg:grid-cols-[200px_1fr] gap-x-6 pb-16 lg:pb-20"
+        className="divide-y  max-w-3xl mx-auto lg:divide-y-0 divide-gray-200 lg:grid lg:grid-cols-[200px_1fr] gap-x-6 pb-16 lg:pb-20"
         style={{ gridTemplateRows: 'auto 1fr' }}
       >
         <dl className="pt-6 pb-10 lg:pt-0 lg:border-b lg:border-gray-200">
