@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import client from '../utils/client'
 import { draftMode } from 'next/headers'
 import { GraphQLClient } from 'graphql-request'
+import Link from 'next/link'
 
 function convertTheme(themeString) {
   if (!themeString) return
@@ -12,6 +13,54 @@ function convertTheme(themeString) {
   if (themeString == 'hollow') return 'transparent'
   if (themeString == 'secondary') return 'bg-amber-700 text-white'
 }
+
+function StripeContent({stripe}) {
+  return (
+    <div className='max-w-3xl mx-auto grid grid-cols-3 gap-5'>
+                  { stripe?.image?.alignment == 'left' && <img className='m-0 h-full object-cover' src={stripe.image.image.url} /> }
+                  <div className={`${stripe.image ? `col-span-2` : `col-span-3`}`}>
+                    <h2 className='text-inherit text-3xl mt-0'>{stripe.title}</h2>
+                    {stripe?.content?.raw && <RichText content={stripe.content.raw} /> }
+                  </div>
+                  { stripe?.image?.alignment == 'right' && <img className='m-0 h-full object-cover' src={stripe.image.image.url} /> }
+
+                  { stripe.button && (
+                    <a
+                      className={`rounded-lg text-sm text-center no-underline px-5 py-2.5 ${convertTheme(stripe.button.theme)}`}
+                      href={stripe.button.link.externalUrl}>{stripe.button.link.displayText}</a>)}
+                </div>
+  )
+}
+function StripeGrid({stripe}) {
+
+  return(
+    <div className='max-w-3xl mx-auto'>
+      <h2 className='text-inherit text-3xl mt-0 col-span-3'>{stripe.title}</h2>
+      {stripe?.contet?.raw && <RichText content={stripe.contet.raw} /> }
+
+      <div className='grid grid-cols-[repeat(auto-fill,_minmax(250px,_1fr))] gap-10'>
+      {stripe?.posts.map(post => (
+        <article className='' key={post.id}>
+          <h3 className="text-inherit"><Link className='no-underline text-inherit' href={`/posts/${post.slug}`}>{post.title}</Link></h3>
+          <p>{post.excerpt}</p>
+          <Link className=" text-inherit" href={`/posts/${post.slug}`}>Read More &raquo;</Link>
+        </article>
+      ))}
+    </div>
+    </div>
+  )
+}
+
+function Stripe({stripe}) {
+  console.log(stripe.__typename)
+  return (
+    <section key={stripe.id} className={`py-10 my-2  ${convertTheme(stripe.theme)}`}>
+                {(stripe.__typename == 'StripeContent') && <StripeContent stripe={stripe} />}
+                {(stripe.__typename == 'StripeGrid') && <StripeGrid stripe={stripe} />}
+    </section>
+  )
+}
+
 
 async function getPage(slug) {
   const { isEnabled } = draftMode()
@@ -59,27 +108,12 @@ export default async function Page({ params }) {
       </div>
       <div className="pb-16 lg:pb-20">
         <div className="prose max-w-none pt-10 pb-8">
-          { page.stripes && page.stripes.map(stripe => {
-            if (stripe.__typename === 'StripeContent') {
-              return (
-              <section key={stripe.id} className={`py-10 my-2  ${convertTheme(stripe.theme)}`}>
-                <div className='max-w-3xl mx-auto grid grid-cols-3 gap-5'>
-                  { stripe?.image?.alignment == 'left' && <img className='m-0 h-full object-cover' src={stripe.image.image.url} /> }
-                  <div className={`${stripe.image ? `col-span-2` : `col-span-3`}`}>
-                    <h1 className='text-inherit'>{stripe.title}</h1>
-                    {stripe?.content?.raw && <RichText content={stripe.content.raw} /> }
-                  </div>
-                  { stripe?.image?.alignment == 'right' && <img className='m-0 h-full object-cover' src={stripe.image.image.url} /> }
-
-                  { stripe.button && (
-                    <a
-                      className={`rounded-lg text-sm text-center no-underline px-5 py-2.5 ${convertTheme(stripe.button.theme)}`}
-                      href={stripe.button.link.externalUrl}>{stripe.button.link.displayText}</a>)}
-                </div>
-              </section>
+          { page.stripes && page.stripes.map(stripe => (
+            <Stripe key={stripe.id} stripe={stripe} />
+          )
               )
             }
-          }) }
+          
         </div>
       </div>
     </div>

@@ -51,6 +51,18 @@ const SinglePage = `
           }
           title
         }
+        ... on StripeGrid {
+          id
+          theme
+          contet {
+            raw
+          }
+          posts {
+            title
+            excerpt
+            slug
+          }
+        }
       }
     }
   }
