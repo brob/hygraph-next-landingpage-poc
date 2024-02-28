@@ -6,7 +6,7 @@ query Test($navId:String!) {
       externalUrl
       displayText
       page {
-        ... on Page {
+        ... on LandingPage {
           id
           slug
         }

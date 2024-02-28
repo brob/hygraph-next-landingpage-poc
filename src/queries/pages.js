@@ -35,12 +35,7 @@ const SinglePage = `
               externalUrl
               displayText
               page {
-                ... on Post {
-                  id
-                  slug
-                  title
-                }
-                ... on Page {
+                ... on LandingPage {
                   id
                   slug
                   title
