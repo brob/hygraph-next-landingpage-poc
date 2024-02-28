@@ -20,7 +20,6 @@ async function getPage(slug) {
 
   const response = await client.request(SinglePage, {slug})
 
-  console.log(response)
   return response.landingPage
 }
 

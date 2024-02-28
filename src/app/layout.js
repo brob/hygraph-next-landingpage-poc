@@ -40,7 +40,7 @@ export default function Layout({ children }) {
                   className="h-10 sm:hidden"
                 />
               </Link>
-              <ul>
+              <ul className='flex-grow flex justify-end gap-8 flex-wrap'>
                 <NavList navId="main" />
               </ul>
             </nav>
